@@ -32,7 +32,6 @@ NODE_ENV = development
 PORT = 5000
 MONGO_URI = your mongodb uri
 JWT_SECRET = 'abc123'
-PAYPAL_CLIENT_ID = your paypal client id
 ```
 
 ### Install Dependencies (frontend & backend)
@@ -86,3 +85,7 @@ john@example.com (Customer)
 jane@example.com (Customer)
 123456
 ```
+
+## MongoDB Atlas
+ IP address: 0.0.0.0/0
+ db username:  rosineUser  password: RosInE@123456
