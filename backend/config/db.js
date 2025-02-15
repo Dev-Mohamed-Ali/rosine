@@ -2,7 +2,8 @@ import mongoose from 'mongoose'
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect('mongodb://localhost:27017/rosine'/*process.env.MONGO_URI*/, {
+     // const conn = await mongoose.connect('mongodb://localhost:27017/rosine'/*process.env.MONGO_URI*/, {
+      const conn = await mongoose.connect('mongodb+srv://rosineUser:TxNAxPCgTWYyvlxq@rosinecluster0.ohcue.mongodb.net/rosineDB?retryWrites=true&w=majority&appName=RosineCluster0'/*process.env.MONGO_URI*/, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
       useCreateIndex: true,
