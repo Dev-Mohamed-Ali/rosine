@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../axiosConfig';
 import {
   CART_ADD_ITEM,
   CART_REMOVE_ITEM,

@@ -8,7 +8,7 @@ import { getUserDetails, updateUserProfile } from '../actions/userActions'
 import { listMyOrders } from '../actions/orderActions'
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 
-const ProfileScreen = ({ location, history }) => {
+const UserDashboardScreen = ({ history }) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,16 +18,16 @@ const ProfileScreen = ({ location, history }) => {
   const dispatch = useDispatch()
 
   const userDetails = useSelector((state) => state.userDetails)
-  const { loading, error, user } = userDetails
+  const { loading, error, user } = userDetails || {}
 
   const userLogin = useSelector((state) => state.userLogin)
-  const { userInfo } = userLogin
+  const { userInfo } = userLogin || {}
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile)
-  const { success } = userUpdateProfile
+  const { success } = userUpdateProfile || {}
 
   const orderListMy = useSelector((state) => state.orderListMy)
-  const { loading: loadingOrders, error: errorOrders, orders } = orderListMy
+  const { loading: loadingOrders, error: errorOrders, orders = [] } = orderListMy || {}
 
   useEffect(() => {
     if (!userInfo) {
@@ -38,8 +38,8 @@ const ProfileScreen = ({ location, history }) => {
         dispatch(getUserDetails('profile'))
         dispatch(listMyOrders())
       } else {
-        setName(user.name)
-        setEmail(user.email)
+        setName(user.name || '')
+        setEmail(user.email || '')
       }
     }
   }, [dispatch, history, userInfo, user, success])
@@ -56,9 +56,8 @@ const ProfileScreen = ({ location, history }) => {
   return (
     <Row>
       <Col md={3}>
-        <h2>User Profile</h2>
+        <h2>User Dashboard</h2>
         {message && <Message variant='danger'>{message}</Message>}
-        {}
         {success && <Message variant='success'>Profile Updated</Message>}
         {loading ? (
           <Loader />
@@ -69,7 +68,7 @@ const ProfileScreen = ({ location, history }) => {
             <Form.Group controlId='name'>
               <Form.Label>Name</Form.Label>
               <Form.Control
-                type='name'
+                type='text'
                 placeholder='Enter name'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -118,6 +117,8 @@ const ProfileScreen = ({ location, history }) => {
           <Loader />
         ) : errorOrders ? (
           <Message variant='danger'>{errorOrders}</Message>
+        ) : orders.length === 0 ? (
+          <Message>No orders found</Message>
         ) : (
           <Table striped bordered hover responsive className='table-sm'>
             <thead>
@@ -134,18 +135,18 @@ const ProfileScreen = ({ location, history }) => {
               {orders.map((order) => (
                 <tr key={order._id}>
                   <td>{order._id}</td>
-                  <td>{order.createdAt.substring(0, 10)}</td>
-                  <td>{order.totalPrice}</td>
+                  <td>{order.createdAt ? order.createdAt.substring(0, 10) : 'N/A'}</td>
+                  <td>{order.totalPrice || '$0.00'}</td>
                   <td>
                     {order.isPaid ? (
-                      order.paidAt.substring(0, 10)
+                      order.paidAt ? order.paidAt.substring(0, 10) : 'Paid'
                     ) : (
                       <i className='fas fa-times' style={{ color: 'red' }}></i>
                     )}
                   </td>
                   <td>
                     {order.isDelivered ? (
-                      order.deliveredAt.substring(0, 10)
+                      order.deliveredAt ? order.deliveredAt.substring(0, 10) : 'Delivered'
                     ) : (
                       <i className='fas fa-times' style={{ color: 'red' }}></i>
                     )}
@@ -167,4 +168,4 @@ const ProfileScreen = ({ location, history }) => {
   )
 }
 
-export default ProfileScreen
+export default UserDashboardScreen

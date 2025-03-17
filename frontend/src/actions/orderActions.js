@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../axiosConfig';
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
 import {
   ORDER_CREATE_REQUEST,
@@ -191,41 +191,31 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
 
 export const listMyOrders = () => async (dispatch, getState) => {
   try {
-    dispatch({
-      type: ORDER_LIST_MY_REQUEST,
-    })
+    dispatch({ type: ORDER_LIST_MY_REQUEST })
 
-   /* const {
+    const {
       userLogin: { userInfo },
     } = getState()
-*/
+
     const config = {
       headers: {
-  //      Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userInfo.token}`, // Ensure token is sent
       },
     }
 
-    const { data } = await axios.get(`/api/orders/myorders`, config)
+    const { data } = await axios.get('/api/orders/myorders', config)
 
-    dispatch({
-      type: ORDER_LIST_MY_SUCCESS,
-      payload: data,
-    })
+    dispatch({ type: ORDER_LIST_MY_SUCCESS, payload: data })
   } catch (error) {
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message
-    /*if (message === 'Not authorized, token failed') {
-      dispatch(logout())
-    }*/
     dispatch({
       type: ORDER_LIST_MY_FAIL,
-      payload: message,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
     })
   }
 }
-
 export const listOrders = () => async (dispatch, getState) => {
   try {
     dispatch({

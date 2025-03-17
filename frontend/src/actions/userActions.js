@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../axiosConfig';
 import {
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
@@ -168,8 +168,11 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       },
     }
 
-    const { data } = await axios.put(`/api/users/profile`, user, config)
-
+const { data } = await axios.get('/api/users/profile', {
+  headers: {
+    Authorization: `Bearer ${userInfo.token}`, // Ensure token is included
+  },
+})
     dispatch({
       type: USER_UPDATE_PROFILE_SUCCESS,
       payload: data,
