@@ -21,8 +21,10 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
-app.use(express.json())
-app.use(cors());
+app.use(cors()); // Enable CORS first
+app.use(express.json()); // Then enable JSON parsing
+app.use(express.urlencoded({ extended: true })); // Also enable URL-encoded data
+
 app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/orders', orderRoutes)

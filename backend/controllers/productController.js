@@ -58,9 +58,11 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
+
   const { name, price, image, brand, category, countInStock, description } = req.body;
 
-  if (!name || !price || !brand || !category || !countInStock || !description) {
+  // Fix: Allow price = 0 and countInStock = 0
+  if (!name || price === undefined || !brand || !category || countInStock === undefined || !description) {
     res.status(400);
     throw new Error('All fields are required');
   }
@@ -69,7 +71,7 @@ const createProduct = asyncHandler(async (req, res) => {
     name,
     price,
     user: req.user._id,
-    image: image || '/images/sample.jpg', // Default image if none provided
+    image: image || '/images/sample.jpg',
     brand,
     category,
     countInStock,
