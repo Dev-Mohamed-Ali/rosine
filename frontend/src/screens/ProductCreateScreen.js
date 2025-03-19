@@ -33,7 +33,7 @@ const ProductCreateScreen = ({ history }) => {
     try {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const { data } = await axios.post('/api/upload', formData, config)
-      setImage(data)
+      setImage(data.image)
       setUploading(false)
     } catch (error) {
       console.error(error)

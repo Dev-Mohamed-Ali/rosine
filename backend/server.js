@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs';
 import express from 'express';
 import dotenv from 'dotenv';
 import colors from 'colors';
@@ -23,25 +22,14 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.use(cors()); // Enable CORS first
+app.use(cors()); // Enable CORS
 app.use(express.json()); // Enable JSON parsing
 app.use(express.urlencoded({ extended: true })); // Enable URL-encoded data
-
-// Ensure "uploads" folder exists
-const __dirname = path.resolve();
-const uploadDir = path.join(__dirname, '/uploads');
-
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true }); // Create folder if not exists
-  console.log('✅ Uploads folder created'.green);
-}
 
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
-
-app.use('/uploads', express.static(uploadDir));
 
 app.get('/api/config/paypal', (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
