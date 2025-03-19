@@ -2,38 +2,28 @@ import React, { useEffect } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
+import * as XLSX from 'xlsx' // Import XLSX for Excel download
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import Paginate from '../components/Paginate'
 import {
   listProducts,
   deleteProduct,
-  createProduct,
 } from '../actions/productActions'
 import { PRODUCT_CREATE_RESET } from '../constants/productConstants'
 
 const ProductListScreen = ({ history, match }) => {
   const pageNumber = match.params.pageNumber || 1
-
   const dispatch = useDispatch()
 
   const productList = useSelector((state) => state.productList)
   const { loading, error, products, page, pages } = productList
 
   const productDelete = useSelector((state) => state.productDelete)
-  const {
-    loading: loadingDelete,
-    error: errorDelete,
-    success: successDelete,
-  } = productDelete
+  const { loading: loadingDelete, error: errorDelete, success: successDelete } = productDelete
 
   const productCreate = useSelector((state) => state.productCreate)
-  const {
-    loading: loadingCreate,
-    error: errorCreate,
-    success: successCreate,
-    product: createdProduct,
-  } = productCreate
+  const { loading: loadingCreate, error: errorCreate, success: successCreate, product: createdProduct } = productCreate
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
@@ -50,25 +40,33 @@ const ProductListScreen = ({ history, match }) => {
     } else {
       dispatch(listProducts('', pageNumber))
     }
-  }, [
-    dispatch,
-    history,
-    userInfo,
-    successDelete,
-    successCreate,
-    createdProduct,
-    pageNumber,
-  ])
+  }, [dispatch, history, userInfo, successDelete, successCreate, createdProduct, pageNumber])
 
   const deleteHandler = (id) => {
-    if (window.confirm('Are you sure')) {
+    if (window.confirm('Are you sure?')) {
       dispatch(deleteProduct(id))
     }
   }
 
-const createProductHandler = () => {
-  history.push('/admin/product/create')
+  const createProductHandler = () => {
+    history.push('/admin/product/create')
+  }
+
+  // 🟢 Function to Download Table as Excel
+const downloadExcel = () => {
+  // Map through products and include the user’s name while excluding unwanted columns
+  const filteredData = products.map(({ _id, brand, user, ...rest }) => ({
+    ...rest,
+    userName: user?.name || 'N/A' // Assuming `user` contains a `name` field
+  }))
+
+  // Convert to Excel sheet and export
+  const worksheet = XLSX.utils.json_to_sheet(filteredData)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Products')
+  XLSX.writeFile(workbook, 'products.xlsx') // Save file
 }
+
 
   return (
     <>
@@ -80,8 +78,13 @@ const createProductHandler = () => {
           <Button className='my-3' onClick={createProductHandler}>
             <i className='fas fa-plus'></i> Create Product
           </Button>
+          {' '}
+          <Button className='my-3 btn-success' onClick={downloadExcel}>
+            <i className='fas fa-download'></i> Download Excel
+          </Button>
         </Col>
       </Row>
+
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
       {loadingCreate && <Loader />}

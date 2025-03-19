@@ -18,7 +18,7 @@ const getProducts = asyncHandler(async (req, res) => {
     : {}
 
   const count = await Product.countDocuments({ ...keyword })
-  const products = await Product.find({ ...keyword })
+  const products = await Product.find({ ...keyword }).populate("user")
     .limit(pageSize)
     .skip(pageSize * (page - 1))
 
@@ -58,21 +58,31 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
-  const product = new Product({
-    name: 'Sample name',
-    price: 0,
-    user: req.user._id,
-    image: '/images/sample.jpg',
-    brand: 'Sample brand',
-    category: 'Sample category',
-    countInStock: 0,
-    numReviews: 0,
-    description: 'Sample description',
-  })
 
-  const createdProduct = await product.save()
-  res.status(201).json(createdProduct)
-})
+  const { name, price, image, brand, category, countInStock, description } = req.body;
+
+  // Fix: Allow price = 0 and countInStock = 0
+  if (!name || price === undefined || !brand || !category || countInStock === undefined || !description) {
+    res.status(400);
+    throw new Error('All fields are required');
+  }
+
+  const product = new Product({
+    name,
+    price,
+    user: req.user._id,
+    image: image || '/images/sample.jpg',
+    brand,
+    category,
+    countInStock,
+    numReviews: 0,
+    description,
+  });
+
+  const createdProduct = await product.save();
+  res.status(201).json(createdProduct);
+});
+
 
 // @desc    Update a product
 // @route   PUT /api/products/:id
