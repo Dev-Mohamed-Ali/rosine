@@ -1,41 +1,29 @@
-import path from 'path'
-import express from 'express'
-import multer from 'multer'
-const router = express.Router()
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
+import multer from 'multer';
 
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename(req, file, cb) {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    )
-  },
-})
+const router = express.Router();
 
-function checkFileType(file, cb) {
-  const filetypes = /jpg|jpeg|png/
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
-  const mimetype = filetypes.test(file.mimetype)
-
-  if (extname && mimetype) {
-    return cb(null, true)
-  } else {
-    cb('Images only!')
-  }
+// Ensure the uploads directory exists
+const uploadDir = 'uploads';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const upload = multer({
-  storage,
-  fileFilter: function (req, file, cb) {
-    checkFileType(file, cb)
-  },
-})
+const storage = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename(req, file, cb) {
+        cb(null, `image-${Date.now()}${path.extname(file.originalname)}`);
+    },
+});
+
+const upload = multer({ storage });
 
 router.post('/', upload.single('image'), (req, res) => {
-  res.send(`/${req.file.path}`)
-})
+    res.json(`/uploads/${req.file.filename}`);
+});
 
-export default router
+export default router;
