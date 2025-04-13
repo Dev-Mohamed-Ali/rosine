@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
-import { Table, Button } from 'react-bootstrap'
+import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
+import * as XLSX from 'xlsx' // Import XLSX for Excel download
 import { listOrders } from '../actions/orderActions'
 
 const OrderListScreen = ({ history }) => {
@@ -23,9 +24,28 @@ const OrderListScreen = ({ history }) => {
     }
   }, [dispatch, history, userInfo])
 
+    // 🟢 Function to Download Table as Excel
+  const downloadExcel = () => {
+    // Convert to Excel sheet and export
+    const worksheet = XLSX.utils.json_to_sheet(orders)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'orders')
+    XLSX.writeFile(workbook, 'orders.xlsx') // Save file
+  }
+
   return (
     <>
-      <h1>Orders</h1>
+      <Row className='align-items-center'>
+        <Col>
+          <h1>Orders</h1>
+        </Col>
+        <Col className='text-right'>
+          <Button className='my-3 btn-success' onClick={downloadExcel}>
+            <i className='fas fa-download'></i> Download Excel
+          </Button>
+        </Col>
+      </Row>
+
       {loading ? (
         <Loader />
       ) : error ? (
