@@ -1,0 +1,6 @@
+ignoredBuiltDependencies:
+  - core-js-pure
+  - es5-ext
+
+onlyBuiltDependencies:
+  - core-js

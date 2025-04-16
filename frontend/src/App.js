@@ -19,49 +19,58 @@ import ProductListScreen from './screens/ProductListScreen'
 import ProductEditScreen from './screens/ProductEditScreen'
 import OrderListScreen from './screens/OrderListScreen'
 import ProductCreateScreen from "./screens/ProductCreateScreen";
+import Cities from './screens/city/Cities'
+import UpdateCities from './screens/city/UpdateCities'
+import CreateCities from './screens/city/CreateCities'
+import {App as AntApp} from 'antd'
 
 const App = () => {
   return (
-    <Router>
-      <Header />
-      <main className='py-4'>
-        <Container>
-          <Route path='/order/:id' component={OrderScreen} />
-          <Route path='/shipping' component={ShippingScreen} />
-          <Route path='/payment' component={PaymentScreen} />
-          <Route path='/placeorder' component={PlaceOrderScreen} />
-          <Route path='/login' component={LoginScreen} />
-          <Route path='/register' component={RegisterScreen} />
-          <Route path='/profile' component={ProfileScreen} />
-          <Route path='/product/:id' component={ProductScreen} />
-          <Route path='/cart/:id?' component={CartScreen} />
-          <Route path='/admin/userlist' component={UserListScreen} />
-          <Route path='/admin/user/:id/edit' component={UserEditScreen} />
-          <Route
-            path='/admin/productlist'
-            component={ProductListScreen}
-            exact
-          />
-          <Route
-            path='/admin/productlist/:pageNumber'
-            component={ProductListScreen}
-            exact
-          />
-          <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
-          <Route path='/admin/product/create' component={ProductCreateScreen} exact />
-          <Route path='/admin/orderlist' component={OrderListScreen} />
-          <Route path='/search/:keyword' component={HomeScreen} exact />
-          <Route path='/page/:pageNumber' component={HomeScreen} exact />
-          <Route
-            path='/search/:keyword/page/:pageNumber'
-            component={HomeScreen}
-            exact
-          />
-          <Route path='/' component={HomeScreen} exact />
-        </Container>
-      </main>
-      <Footer />
-    </Router>
+    <AntApp>
+      <Router>
+        <Header />
+        <main className='py-4'>
+          <Container>
+            <Route path='/order/:id' component={OrderScreen} />
+            <Route path='/shipping' component={ShippingScreen} />
+            <Route path='/payment' component={PaymentScreen} />
+            <Route path='/placeorder' component={PlaceOrderScreen} />
+            <Route path='/login' component={LoginScreen} />
+            <Route path='/register' component={RegisterScreen} />
+            <Route path='/profile' component={ProfileScreen} />
+            <Route path='/product/:id' component={ProductScreen} />
+            <Route path='/cart/:id?' component={CartScreen} />
+            <Route path='/admin/userlist' component={UserListScreen} />
+            <Route path='/admin/user/:id/edit' component={UserEditScreen} />
+            <Route
+              path='/admin/productlist'
+              component={ProductListScreen}
+              exact
+            />
+            <Route
+              path='/admin/productlist/:pageNumber'
+              component={ProductListScreen}
+              exact
+            />
+            <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
+            <Route path='/admin/product/create' component={ProductCreateScreen} exact />
+            <Route path='/admin/city' exact component={Cities} />
+            <Route path='/admin/city/create' exact component={CreateCities} />
+            <Route path='/admin/city/edit/:cityId' exact component={UpdateCities} />
+            <Route path='/admin/orderlist' component={OrderListScreen} />
+            <Route path='/search/:keyword' component={HomeScreen} exact />
+            <Route path='/page/:pageNumber' component={HomeScreen} exact />
+            <Route
+              path='/search/:keyword/page/:pageNumber'
+              component={HomeScreen}
+              exact
+            />
+            <Route path='/' component={HomeScreen} exact />
+          </Container>
+        </main>
+        <Footer />
+      </Router>
+    </AntApp>
   )
 }
 
