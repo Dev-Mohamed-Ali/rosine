@@ -1,29 +1,21 @@
-import fs from 'fs';
-import path from 'path';
 import express from 'express';
 import multer from 'multer';
+import cloudinary from '../config/cloudinary.js';
 
 const router = express.Router();
 
-// Ensure the uploads directory exists
-const uploadDir = 'uploads';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, uploadDir);
-    },
-    filename(req, file, cb) {
-        cb(null, `image-${Date.now()}${path.extname(file.originalname)}`);
-    },
-});
-
+// Configure Multer to use Cloudinary
+const storage = multer.diskStorage({});
 const upload = multer({ storage });
 
-router.post('/', upload.single('image'), (req, res) => {
-    res.json(`/uploads/${req.file.filename}`);
+// Upload Image to Cloudinary
+router.post('/', upload.single('image'), async (req, res) => {
+  try {
+    const result = await cloudinary.v2.uploader.upload(req.file.path);
+    res.json({ image: result.secure_url }); // ✅ Return Cloudinary image URL
+  } catch (error) {
+    res.status(500).json({ message: 'Image upload failed', error });
+  }
 });
 
 export default router;
