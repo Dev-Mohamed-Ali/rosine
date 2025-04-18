@@ -150,7 +150,7 @@ const PlaceOrderScreen = ({ history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col><strong>الاجمالى</strong></Col>
-                  <Col>جم{cart.totalPrice}</Col>
+                  <Col>جم{parseFloat(cart.totalPrice)+cart.shippingAddress.city.deliveryFees}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
