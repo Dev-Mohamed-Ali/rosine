@@ -197,7 +197,7 @@ console.log(order.orderItems)
               <ListGroup.Item>
                 <Row>
                   <Col>الاجمالى</Col>
-                  <Col>جم{order.totalPrice}</Col>
+                  <Col>جم{order.totalPrice + order.shippingAddress.city.deliveryFees}</Col>
                 </Row>
               </ListGroup.Item>
               {/*!order.isPaid && (
