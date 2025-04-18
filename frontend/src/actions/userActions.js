@@ -1,4 +1,5 @@
 import axios from '../axiosConfig';
+import {message} from 'antd'
 import {
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
@@ -255,16 +256,21 @@ export const deleteUser = (id) => async (dispatch, getState) => {
 
     dispatch({ type: USER_DELETE_SUCCESS })
   } catch (error) {
-    const message =
+    const errorMessage =
       error.response && error.response.data.message
         ? error.response.data.message
         : error.message
-    if (message === 'Not authorized, token failed') {
+    if (errorMessage === 'Not authorized, token failed') {
       dispatch(logout())
+    }
+    if(error.response.data.error){
+      message.error(error.response.data.error)
+    } else {
+      message.error(errorMessage)
     }
     dispatch({
       type: USER_DELETE_FAIL,
-      payload: message,
+      payload: errorMessage,
     })
   }
 }
