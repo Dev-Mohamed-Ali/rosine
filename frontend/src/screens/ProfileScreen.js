@@ -85,7 +85,7 @@ const UserDashboardScreen = ({ history }) => {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId='password'>
+            {/* <Form.Group controlId='password'>
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type='password'
@@ -103,7 +103,7 @@ const UserDashboardScreen = ({ history }) => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               ></Form.Control>
-            </Form.Group>
+            </Form.Group> */}
 
             <Button type='submit' variant='primary'>
               Update

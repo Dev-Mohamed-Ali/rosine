@@ -138,7 +138,7 @@ const PlaceOrderScreen = ({ history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col><strong>التوصيل</strong></Col>
-                  <Col>رسوم الشحن تحتسب عند الدفع{/*${cart.shippingPrice}*/}</Col>
+                  <Col>{cart.shippingAddress.city.deliveryFees??'رسوم الشحن تحتسب عند الدفع'}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>

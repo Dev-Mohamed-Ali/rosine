@@ -32,6 +32,8 @@ const ShippingScreen = ({ history }) => {
     try {
       const citiesResponse = await API.get('/api/city');
       setCities(citiesResponse.data.data);
+
+      setCity(citiesResponse.data.data[0]);
     } catch (error) {
       app.message.error(error.message);
     } finally {

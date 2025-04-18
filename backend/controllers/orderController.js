@@ -1,6 +1,8 @@
 import asyncHandler from 'express-async-handler'
 import Order from '../models/orderModel.js'
 import cityModal from '../models/city.modal.js'
+import User from '../models/userModel.js'
+import jwt from 'jsonwebtoken'
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -18,6 +20,16 @@ const addOrderItems = asyncHandler(async (req, res) => {
 
   const city = await cityModal.findById(shippingAddress.city)
 
+  let user = null
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      const token = req.headers.authorization.split(' ')[1] 
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
+  
+      user = await User.findById(decoded.id).select('-password') 
+    }
+
   if (!city) {
     res.status(400)
     throw new Error('City not found')
@@ -30,7 +42,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
   } else {
     const order = new Order({
       orderItems,
-     // user: req.user._id,
+      user: user?._id,
       shippingAddress:{
         ...shippingAddress,
         deliveryFees: city.deliveryFees
