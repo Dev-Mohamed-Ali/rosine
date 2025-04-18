@@ -72,7 +72,7 @@ const PlaceOrderScreen = ({ history }) => {
               <h2>الشحن</h2>
               <p>
                 <strong>العنوان:</strong>
-                {cart.shippingAddress.address}, {cart.shippingAddress.city}{' '}
+                {cart.shippingAddress.address}, {cart.shippingAddress.city.name}{' '}
                 {/*cart.shippingAddress.postalCode*/},{' '}
                 {/*cart.shippingAddress.country*/}
               </p>
@@ -138,7 +138,7 @@ const PlaceOrderScreen = ({ history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col><strong>التوصيل</strong></Col>
-                  <Col>رسوم الشحن تحتسب عند الدفع{/*${cart.shippingPrice}*/}</Col>
+                  <Col>{cart.shippingAddress.city.deliveryFees??'رسوم الشحن تحتسب عند الدفع'}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
@@ -150,7 +150,7 @@ const PlaceOrderScreen = ({ history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col><strong>الاجمالى</strong></Col>
-                  <Col>جم{cart.totalPrice}</Col>
+                  <Col>جم{parseFloat(cart.totalPrice)+cart.shippingAddress.city.deliveryFees}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>

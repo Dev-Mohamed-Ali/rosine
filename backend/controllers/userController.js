@@ -108,7 +108,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({})
+  const users = await User.find({}).sort('-isSuperAdmin')
   res.json(users)
 })
 
@@ -119,6 +119,9 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id)
 
   if (user) {
+    if(user.isSuperAdmin) {
+     return res.status(400).json({error: 'Cannot delete super admin'})
+    }
     await user.remove()
     res.json({ message: 'User removed' })
   } else {
@@ -151,6 +154,10 @@ const updateUser = asyncHandler(async (req, res) => {
     user.name = req.body.name || user.name
     user.email = req.body.email || user.email
     user.isAdmin = req.body.isAdmin
+
+    if(req.body.password) {
+      user.password = req.body.password
+    }
 
     const updatedUser = await user.save()
 

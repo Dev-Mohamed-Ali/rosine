@@ -111,7 +111,7 @@ console.log(order.orderItems)
               */}
               <p>
                 <strong>Address:</strong>
-                {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
+                {order.shippingAddress.address}, {order.shippingAddress.city.name}{' '}
                 {order.shippingAddress.postalCode},{' '}
                 {order.shippingAddress.country}
               </p>
@@ -185,7 +185,7 @@ console.log(order.orderItems)
               <ListGroup.Item>
                 <Row>
                   <Col>رسوم الشحن</Col>
-                  <Col>جم{order.shippingPrice}</Col>
+                  <Col>جم{order.shippingAddress.city.deliveryFees}</Col>
                 </Row>
               </ListGroup.Item>
               {/*<ListGroup.Item>
@@ -197,7 +197,7 @@ console.log(order.orderItems)
               <ListGroup.Item>
                 <Row>
                   <Col>الاجمالى</Col>
-                  <Col>جم{order.totalPrice}</Col>
+                  <Col>جم{order.totalPrice + order.shippingAddress.city.deliveryFees}</Col>
                 </Row>
               </ListGroup.Item>
               {/*!order.isPaid && (

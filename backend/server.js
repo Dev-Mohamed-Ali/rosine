@@ -12,6 +12,7 @@ import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import cityRoutes from './routes/city.routes.js';
 
 dotenv.config();
 connectDB();
@@ -27,6 +28,7 @@ app.use(express.json()); // Enable JSON parsing
 app.use(express.urlencoded({ extended: true })); // Enable URL-encoded data
 
 app.use('/api/products', productRoutes);
+app.use('/api/city', cityRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);

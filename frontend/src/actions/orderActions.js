@@ -1,3 +1,4 @@
+import API from '../api/api';
 import axios from '../axiosConfig';
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
 import {
@@ -27,19 +28,9 @@ export const createOrder = (order) => async (dispatch, getState) => {
     dispatch({
       type: ORDER_CREATE_REQUEST,
     })
-/*
-    const {
-      userLogin: { userInfo },
-    } = getState()
-*/
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        /*Authorization: `Bearer ${userInfo.token}`,*/
-      },
-    }
-    console.log(order)
-    const { data } = await axios.post(`/api/orders`, order, config)
+
+    
+    const { data } = await API.post(`/api/orders`, order)
 
     dispatch({
       type: ORDER_CREATE_SUCCESS,

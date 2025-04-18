@@ -1,5 +1,9 @@
 import asyncHandler from 'express-async-handler'
 import Order from '../models/orderModel.js'
+import cityModal from '../models/city.modal.js'
+import User from '../models/userModel.js'
+import jwt from 'jsonwebtoken'
+import * as XLSX from 'xlsx'
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -14,7 +18,24 @@ const addOrderItems = asyncHandler(async (req, res) => {
     shippingPrice,
     totalPrice,
   } = req.body
-console.log(req.body)
+
+  const city = await cityModal.findById(shippingAddress.city)
+
+  let user = null
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      const token = req.headers.authorization.split(' ')[1] 
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
+  
+      user = await User.findById(decoded.id).select('-password') 
+    }
+
+  if (!city) {
+    res.status(400)
+    throw new Error('City not found')
+  }
+
   if (orderItems && orderItems.length === 0) {
     res.status(400)
     throw new Error('No order items')
@@ -22,15 +43,18 @@ console.log(req.body)
   } else {
     const order = new Order({
       orderItems,
-     // user: req.user._id,
-      shippingAddress,
+      user: user?._id,
+      shippingAddress:{
+        ...shippingAddress,
+        deliveryFees: city.deliveryFees
+      },
       paymentMethod,
       itemsPrice,
       taxPrice,
       shippingPrice,
       totalPrice,
     })
-console.log(order)
+
     const createdOrder = await order.save()
 
     res.status(201).json(createdOrder)
@@ -122,6 +146,43 @@ const getOrders = asyncHandler(async (req, res) => {
   res.json(orders)
 })
 
+const exportOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({})
+    .populate('user', 'id name')
+    .populate('orderItems')
+
+  const data = [
+    ['Order ID', 'username', 'phone','Service_Category', 'Payment_Type', 'Service', 'City', 'ReturnServiceType', 'Packagevolume'],
+  ]
+
+  orders.forEach(order => {
+    data.push([
+      String(order._id),
+      order.user?.name,
+      order.shippingAddress?.phoneNumber || '',
+      'Delivery',
+      'Cash-on-Delivery',
+      order.createdAt.toDateString() === new Date().toDateString() ? 'Same Day' : 'Next Day',
+      order.shippingAddress?.city?.name || '',
+      'Door-to-Door',
+      'Small',
+    ])
+  })
+
+  const worksheet = XLSX.utils.aoa_to_sheet(data)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders')
+
+  const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' })
+
+  res.setHeader(
+    'Content-Type',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  )
+  res.setHeader('Content-Disposition', 'attachment; filename=orders.xlsx')
+  res.send(buffer)
+})
+
 export {
   addOrderItems,
   getOrderById,
@@ -129,4 +190,5 @@ export {
   updateOrderToDelivered,
   getMyOrders,
   getOrders,
+  exportOrders,
 }

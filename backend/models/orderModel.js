@@ -1,12 +1,16 @@
 import mongoose from 'mongoose'
+import mongooseAutopopulate from 'mongoose-autopopulate'
 
-const orderSchema = mongoose.Schema(
+const orderSchema = new mongoose.Schema(
   {
-    /*user: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: 'User',
-    },*/
+      default: null,
+      autopopulate: {
+        select: '_id name email',
+      },
+    },
     orderItems: [
       {
         name: { type: String, required: true },
@@ -22,8 +26,9 @@ const orderSchema = mongoose.Schema(
     ],
     shippingAddress: {
       address: { type: String, required: true },
-      city: { type: String, required: true },
+      city: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true, autopopulate: true },
       phoneNumber: { type: String, required: true },
+      deliveryFees: { type: Number, required: true },
       //postalCode: { type: String, required: true },
       //country: { type: String, required: true },
     },
@@ -73,6 +78,8 @@ const orderSchema = mongoose.Schema(
     timestamps: true,
   }
 )
+
+orderSchema.plugin(mongooseAutopopulate);
 
 const Order = mongoose.model('Order', orderSchema)
 
