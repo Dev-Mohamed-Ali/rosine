@@ -3,6 +3,7 @@ import Order from '../models/orderModel.js'
 import cityModal from '../models/city.modal.js'
 import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
+import * as XLSX from 'xlsx'
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -145,6 +146,43 @@ const getOrders = asyncHandler(async (req, res) => {
   res.json(orders)
 })
 
+const exportOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({})
+    .populate('user', 'id name')
+    .populate('orderItems')
+
+  const data = [
+    ['Order ID', 'username', 'phone','Service_Category', 'Payment_Type', 'Service', 'City', 'ReturnServiceType', 'Packagevolume'],
+  ]
+
+  orders.forEach(order => {
+    data.push([
+      String(order._id),
+      order.user?.name,
+      order.shippingAddress?.phoneNumber || '',
+      'Delivery',
+      'Cash-on-Delivery',
+      order.createdAt.toDateString() === new Date().toDateString() ? 'Same Day' : 'Next Day',
+      order.shippingAddress?.city?.name || '',
+      'Door-to-Door',
+      'Small',
+    ])
+  })
+
+  const worksheet = XLSX.utils.aoa_to_sheet(data)
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders')
+
+  const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' })
+
+  res.setHeader(
+    'Content-Type',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  )
+  res.setHeader('Content-Disposition', 'attachment; filename=orders.xlsx')
+  res.send(buffer)
+})
+
 export {
   addOrderItems,
   getOrderById,
@@ -152,4 +190,5 @@ export {
   updateOrderToDelivered,
   getMyOrders,
   getOrders,
+  exportOrders,
 }

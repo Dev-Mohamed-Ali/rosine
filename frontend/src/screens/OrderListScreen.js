@@ -4,8 +4,8 @@ import { Table, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import * as XLSX from 'xlsx' // Import XLSX for Excel download
 import { listOrders } from '../actions/orderActions'
+import API from '../api/api'
 
 const OrderListScreen = ({ history }) => {
   const dispatch = useDispatch()
@@ -24,13 +24,20 @@ const OrderListScreen = ({ history }) => {
     }
   }, [dispatch, history, userInfo])
 
-    // 🟢 Function to Download Table as Excel
-  const downloadExcel = () => {
-    // Convert to Excel sheet and export
-    const worksheet = XLSX.utils.json_to_sheet(orders)
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'orders')
-    XLSX.writeFile(workbook, 'orders.xlsx') // Save file
+  const downloadExcel = async () => {
+    try {
+      await API.get('/api/orders/export', { responseType: 'blob' }).then((response) => {
+        const blob = new Blob([response.data])
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'orders.xlsx'
+        a.click()
+        window.URL.revokeObjectURL(url)
+      })
+    } catch (error) {
+      console.error('Error downloading Excel file:', error)
+    }
   }
 
   return (
