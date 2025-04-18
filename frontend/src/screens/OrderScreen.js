@@ -185,7 +185,7 @@ console.log(order.orderItems)
               <ListGroup.Item>
                 <Row>
                   <Col>رسوم الشحن</Col>
-                  <Col>جم{order.shippingPrice}</Col>
+                  <Col>جم{order.shippingAddress.city.deliveryFees}</Col>
                 </Row>
               </ListGroup.Item>
               {/*<ListGroup.Item>
