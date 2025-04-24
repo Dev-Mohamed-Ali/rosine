@@ -24,39 +24,40 @@ const HomeScreen = ({ match }) => {
     dispatch(listProducts(keyword, pageNumber))
   }, [dispatch, keyword, pageNumber])
 
-  return (
-    <>
-      <Meta />
-      {!keyword ? (
-        <ProductCarousel />
-      ) : (
-        <Link to='/' className='btn btn-warning'>
-          الرجوع للخلف
-        </Link>
-      )}
-      <h1>Rosine منتجات</h1>
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant='danger'>{error}</Message>
-      ) : (
-        <>
-          <Row>
-            {products.map((product) => (
-              <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+return (
+  <>
+    <Meta />
+    {!keyword ? (
+      <ProductCarousel />
+    ) : (
+      <Link to='/' className='btn btn-warning my-3'>
+        ← الرجوع للخلف
+      </Link>
+    )}
+
+    <h1 className='text-warning mb-4'>منتجات Rosine</h1>
+
+    {loading ? (
+      <Loader />
+    ) : error ? (
+      <Message variant='danger'>{error}</Message>
+    ) : (
+      <>
+        <Row className='g-4'>
+          {products.map((product) => (
+            <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+              <div className='product-card'>
                 <Product product={product} />
-              </Col>
-            ))}
-          </Row>
-          <Paginate
-            pages={pages}
-            page={page}
-            keyword={keyword ? keyword : ''}
-          />
-        </>
-      )}
-    </>
-  )
+              </div>
+            </Col>
+          ))}
+        </Row>
+        <Paginate pages={pages} page={page} keyword={keyword ? keyword : ''} />
+      </>
+    )}
+  </>
+)
+
 }
 
 export default HomeScreen

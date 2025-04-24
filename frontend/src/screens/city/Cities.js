@@ -1,4 +1,4 @@
-import { Col, Popconfirm, Row } from 'antd';
+import {  Popconfirm} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
@@ -6,6 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
 import API from '../../api/api';
+import { Row, Col } from 'react-bootstrap'
 
 function Cities() {
 
@@ -43,74 +44,73 @@ function Cities() {
   };
 
   return (
-    <>
-      <Row align='middle' justify='space-between' >
-        <Col>
-          <h1>Cities</h1>
-        </Col>
+<>
+  <Row className='align-items-center mb-4 px-4'>
+    <Col>
+      <h2 className='text-primary'>🏙️ المدن</h2>
+    </Col>
+    <Col className='text-right'>
+      <Link to='/admin/city/create'>
+        <Button variant='warning'>
+          <i className='fas fa-plus'></i> مدينة جديدة
+        </Button>
+      </Link>
+    </Col>
+  </Row>
 
-        <Col>
-          <Link to='/admin/city/create' >
-          <Button >
-            <i className='fas fa-plus'></i> Create City
-          </Button>
-          </Link>
-        </Col>
-      </Row>
+  {isLoading && <Loader />}
 
-      {isLoading && <Loader />}
+  {error && !isLoading && <Message variant='danger'>{error}</Message>}
 
-      {error && !isLoading && <Message variant='danger'>{error}</Message>}
-
-      {!isLoading && !error && cities.length >= 0 && (
-        <Table striped bordered hover responsive className='table-sm'>
-          <thead>
-            <tr>
-              <th>NAME</th>
-              <th>Delivery Fees</th>
-              <th>ACTIONS</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {cities.length > 0 ? (
-              cities.map((city) => (
-                <tr key={city._id}>
-
-                  <td>{city.name}</td>
-
-                  <td>{city.deliveryFees}</td>
-
-                  <td>
-                    <LinkContainer to={`/admin/city/edit/${city._id}`}>
-                      <Button variant='light' className='btn-sm'>
-                        <i className='fas fa-edit'></i>
-                      </Button>
-                    </LinkContainer>
-
-                    <Popconfirm
-                      title='Delete the city'
-                      description='Are you sure to delete?'
-                      onConfirm={() => onDeleteConfirm(city._id)}
-                    >
-                      <Button variant='danger' className='btn-sm'>
-                        <i className='fas fa-trash'></i>
-                      </Button>
-                    </Popconfirm>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={10}>
-                  <Message variant='info'>No cities found</Message>
+  {!isLoading && !error && (
+    <div className='table-responsive'>
+      <Table striped bordered hover responsive className='align-middle table-sm shadow-sm'>
+        <thead className='table-dark'>
+          <tr>
+            <th>الاسم</th>
+            <th>رسوم التوصيل</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {cities.length > 0 ? (
+            cities.map((city) => (
+              <tr key={city._id}>
+                <td>{city.name}</td>
+                <td>ج.م {city.deliveryFees}</td>
+                <td>
+                  <LinkContainer to={`/admin/city/edit/${city._id}`}>
+                    <Button variant='outline-secondary' className='btn-sm me-2' title='تعديل'>
+                      <i className='fas fa-edit'></i>
+                    </Button>
+                  </LinkContainer>
+                  <Popconfirm
+                    title='هل أنت متأكد من الحذف؟'
+                    description='لن يمكنك التراجع بعد ذلك'
+                    onConfirm={() => onDeleteConfirm(city._id)}
+                    okText='نعم'
+                    cancelText='لا'
+                  >
+                    <Button variant='outline-danger' className='btn-sm' title='حذف'>
+                      <i className='fas fa-trash'></i>
+                    </Button>
+                  </Popconfirm>
                 </td>
               </tr>
-            )}
-          </tbody>
-        </Table>
-      )}
-    </>
+            ))
+          ) : (
+            <tr>
+              <td colSpan='3'>
+                <Message variant='info'>لا توجد مدن حالياً</Message>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </div>
+  )}
+</>
+
   );
 }
 

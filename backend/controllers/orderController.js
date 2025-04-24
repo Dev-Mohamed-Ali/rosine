@@ -152,14 +152,16 @@ const exportOrders = asyncHandler(async (req, res) => {
     .populate('orderItems')
 
   const data = [
-    ['Order ID', 'username', 'phone','Service_Category', 'Payment_Type', 'Service', 'City', 'ReturnServiceType', 'Packagevolume'],
+    ['Order ID', 'username','client_name', 'phone','address','Service_Category', 'Payment_Type', 'Service', 'City', 'ReturnServiceType', 'Packagevolume'],
   ]
 
   orders.forEach(order => {
     data.push([
       String(order._id),
       order.user?.name,
+      order.shippingAddress?.client_name || '',
       order.shippingAddress?.phoneNumber || '',
+      order.shippingAddress?.address || '',
       'Delivery',
       'Cash-on-Delivery',
       order.createdAt.toDateString() === new Date().toDateString() ? 'Same Day' : 'Next Day',
@@ -183,6 +185,58 @@ const exportOrders = asyncHandler(async (req, res) => {
   res.send(buffer)
 })
 
+// @desc    Delete an order by ID (admin only)
+// @route   DELETE /api/orders/:id
+// @access  Private/Admin
+const deleteOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+
+    if (order) {
+      await order.remove()
+      res.json({ message: 'Order removed' })
+    } else {
+      res.status(404)
+      throw new Error('Order not found')
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
+  }
+}
+
+// @desc    Toggle paid status for an order
+// @route   PATCH /api/orders/:id/pay-status
+// @access  Private/Admin
+const updateOrderPaymentStatus = async (req, res) => {
+  const order = await Order.findById(req.params.id)
+
+  if (order) {
+    order.isPaid = !order.isPaid
+    order.paidAt = order.isPaid ? Date.now() : null
+    const updatedOrder = await order.save()
+    res.json(updatedOrder)
+  } else {
+    res.status(404)
+    throw new Error('Order not found')
+  }
+}
+
+const updateOrderDeliverStatus = async (req, res) => {
+  const order = await Order.findById(req.params.id)
+
+  if (order) {
+    order.isDelivered = !order.isDelivered
+    order.deliveredAt = order.isDelivered ? Date.now() : null
+    const updatedOrder = await order.save()
+    res.json(updatedOrder)
+  } else {
+    res.status(404)
+    throw new Error('Order not found')
+  }
+}
+
+
 export {
   addOrderItems,
   getOrderById,
@@ -191,4 +245,7 @@ export {
   getMyOrders,
   getOrders,
   exportOrders,
+  deleteOrderById,
+  updateOrderPaymentStatus,
+  updateOrderDeliverStatus,
 }

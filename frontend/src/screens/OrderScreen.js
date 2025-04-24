@@ -86,155 +86,116 @@ console.log(order.orderItems)
     dispatch(deliverOrder(order))
   }
 
-  return loading ? (
-    <Loader />
-  ) : error ? (
-    <Message variant='danger'>{error}</Message>
-  ) : (
-    <>
-      <h1 style={{color:'green'}}>تم تسجيل اوردرك بنجاح برقم </h1>
-      <h3>{order._id}</h3>
-      <Row>
-        <Col md={8}>
+return loading ? (
+  <Loader />
+) : error ? (
+  <Message variant='danger'>{error}</Message>
+) : (
+  <>
+    <Card className='p-4 mb-4 shadow-sm'>
+      <h2 style={{ color: 'green' }}>
+        ✅ تم تسجيل اوردرك بنجاح برقم <strong>{order._id}</strong>
+      </h2>
+    </Card>
+
+    <Row>
+      <Col md={8}>
+        <Card className='mb-4 shadow-sm p-3 bg-white rounded'>
+          <h3 className='text-primary'>📍 تفاصيل العنوان</h3>
+          <p><strong>👤 اسم العميل:</strong> {order.shippingAddress.client_name}</p>
+          <p><strong>📌 العنوان:</strong> {order.shippingAddress.address}, {order.shippingAddress.city.name}</p>
+          <p><strong>📞 رقم الموبايل:</strong> {order.shippingAddress.phoneNumber}</p>
+          {order.isDelivered ? (
+            <Message variant='success'>📦 تم التسليم في: {order.deliveredAt}</Message>
+          ) : (
+            <Message variant='danger'>🚫 لم يتم التسليم بعد</Message>
+          )}
+        </Card>
+
+        <Card className='mb-4 shadow-sm p-3 bg-white rounded'>
+          <h3 className='text-primary'>💳 طريقة الدفع</h3>
+          <p><strong>الطريقة:</strong> {order.paymentMethod}</p>
+          {order.isPaid ? (
+            <Message variant='success'>💰 تم الدفع بتاريخ: {order.paidAt}</Message>
+          ) : (
+            <Message variant='danger'>💸 لم يتم الدفع بعد</Message>
+          )}
+        </Card>
+
+        <Card className='shadow-sm p-3 bg-white rounded'>
+          <h3 className='text-primary'>🛍️ وحدات الاوردر</h3>
+          {order.orderItems.length === 0 ? (
+            <Message>🧺 لا يوجد عناصر في الطلب</Message>
+          ) : (
+            <ListGroup variant='flush'>
+              {order.orderItems.map((item, index) => (
+                <ListGroup.Item key={index}>
+                  <Row className='align-items-center'>
+                    <Col xs={2} md={1}>
+                      <Image src={item.image} alt={item.name} fluid rounded />
+                    </Col>
+                    <Col>
+                      <Link to={`/product/${item.product}`} className='text-dark'>
+                        {item.name}
+                      </Link>
+                    </Col>
+                    <Col md={4}>
+                      {item.qty} x {item.price} = <strong>{item.qty * item.price} جم</strong>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )}
+        </Card>
+      </Col>
+
+      <Col md={4}>
+        <Card className='shadow-sm p-4 bg-light rounded'>
+          <h3 className='text-center mb-3'>🧾 ملخص الطلب</h3>
+
           <ListGroup variant='flush'>
             <ListGroup.Item>
-              <h2>تفاصيل العنوان</h2>
-              {/*
-              <p>
-                <strong>Name: </strong> {order.user.name}
-              </p>
-            
-              <p>
-                <strong>Email: </strong>{' '}
-                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
-              </p>
-              */}
-              <p>
-                <strong>Address:</strong>
-                {order.shippingAddress.address}, {order.shippingAddress.city.name}{' '}
-                {order.shippingAddress.postalCode},{' '}
-                {order.shippingAddress.country}
-              </p>
-              {order.isDelivered ? (
-                <Message variant='success'>
-                  Delivered on {order.deliveredAt}
-                </Message>
-              ) : (
-                <Message variant='danger'>Not Delivered</Message>
-              )}
+              <Row>
+                <Col>الوحدات</Col>
+                <Col>جم{order.itemsPrice}</Col>
+              </Row>
             </ListGroup.Item>
 
             <ListGroup.Item>
-              <h2>طريقة الدفع</h2>
-              <p>
-                <strong>الطريقة: </strong>
-                {order.paymentMethod}
-              </p>
-              {order.isPaid ? (
-                <Message variant='success'>Paid on {order.paidAt}</Message>
-              ) : (
-                <Message variant='danger'>Not Paid</Message>
-              )}
+              <Row>
+                <Col>رسوم الشحن</Col>
+                <Col>جم{order.shippingAddress.city.deliveryFees}</Col>
+              </Row>
             </ListGroup.Item>
 
             <ListGroup.Item>
-              <h2>وحدات الاوردر</h2>
-              {order.orderItems.length === 0 ? (
-                <Message>Order is empty</Message>
-              ) : (
-                <ListGroup variant='flush'>
-                  {order.orderItems.map((item, index) => (
-                    <ListGroup.Item key={index}>
-                      <Row>
-                        <Col md={1}>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fluid
-                            rounded
-                          />
-                        </Col>
-                        <Col>
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </Col>
-                        <Col md={4}>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              )}
+              <Row>
+                <Col>الاجمالى</Col>
+                <Col>جم{parseFloat(order.totalPrice) + order.shippingAddress.city.deliveryFees}</Col>
+              </Row>
             </ListGroup.Item>
+
+            {loadingDeliver && <Loader />}
+
+            {order.isPaid && !order.isDelivered && (
+              <ListGroup.Item>
+                <Button
+                  type='button'
+                  className='btn btn-success btn-block rounded-pill'
+                  onClick={deliverHandler}
+                >
+                  📦 تأكيد التسليم
+                </Button>
+              </ListGroup.Item>
+            )}
           </ListGroup>
-        </Col>
-        <Col md={4}>
-          <Card>
-            <ListGroup variant='flush'>
-              <ListGroup.Item>
-                <h2>ملخص طلبك</h2>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>الوحدات</Col>
-                  <Col>جم{order.itemsPrice}</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>رسوم الشحن</Col>
-                  <Col>جم{order.shippingAddress.city.deliveryFees}</Col>
-                </Row>
-              </ListGroup.Item>
-              {/*<ListGroup.Item>
-                <Row>
-                  <Col>Tax</Col>
-                  <Col>${order.taxPrice}</Col>
-                </Row>
-                  </ListGroup.Item> */}
-              <ListGroup.Item>
-                <Row>
-                  <Col>الاجمالى</Col>
-                  <Col>جم{order.totalPrice + order.shippingAddress.city.deliveryFees}</Col>
-                </Row>
-              </ListGroup.Item>
-              {/*!order.isPaid && (
-                <ListGroup.Item>
-                  {loadingPay && <Loader />}
-                  {!sdkReady ? (
-                    <Loader />
-                  ) : (
-                    <PayPalButton
-                      amount={order.totalPrice}
-                      onSuccess={successPaymentHandler}
-                    />
-                  )}
-                </ListGroup.Item>
-                  )*/}
-              {loadingDeliver && <Loader />}
-              {/*userInfo &&*/
-               /* userInfo.isAdmin &&*/
-                order.isPaid &&
-                !order.isDelivered && (
-                  <ListGroup.Item>
-                    <Button
-                      type='button'
-                      className='btn btn-block'
-                      style={{backgroundColor:'green'}}
-                      onClick={deliverHandler}
-                    >
-                      Mark As Delivered
-                    </Button>
-                  </ListGroup.Item>
-                )}
-            </ListGroup>
-          </Card>
-        </Col>
-      </Row>
-    </>
-  )
+        </Card>
+      </Col>
+    </Row>
+  </>
+)
+
 }
 
 export default OrderScreen

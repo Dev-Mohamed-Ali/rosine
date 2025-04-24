@@ -69,73 +69,77 @@ const downloadExcel = () => {
 
 
   return (
-    <>
-      <Row className='align-items-center'>
-        <Col>
-          <h1>Products</h1>
-        </Col>
-        <Col className='text-right'>
-          <Button className='my-3' onClick={createProductHandler}>
-            <i className='fas fa-plus'></i> Create Product
-          </Button>
-          {' '}
-          <Button className='my-3 btn-success' onClick={downloadExcel}>
-            <i className='fas fa-download'></i> Download Excel
-          </Button>
-        </Col>
-      </Row>
+<>
+  <Row className='align-items-center mb-4'>
+    <Col>
+      <h1 className='text-primary'>📦 إدارة المنتجات</h1>
+    </Col>
+    <Col className='text-right'>
+      <Button variant='outline-primary' className='me-2' onClick={createProductHandler}>
+        <i className='fas fa-plus'></i> منتج جديد
+      </Button>
+      <Button variant='success' onClick={downloadExcel}>
+        <i className='fas fa-download'></i> تصدير Excel
+      </Button>
+    </Col>
+  </Row>
 
-      {loadingDelete && <Loader />}
-      {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
-      {loadingCreate && <Loader />}
-      {errorCreate && <Message variant='danger'>{errorCreate}</Message>}
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant='danger'>{error}</Message>
-      ) : (
-        <>
-          <Table striped bordered hover responsive className='table-sm'>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>NAME</th>
-                <th>PRICE</th>
-                <th>CATEGORY</th>
-                <th>BRAND</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product._id}>
-                  <td>{product._id}</td>
-                  <td>{product.name}</td>
-                  <td>${product.price}</td>
-                  <td>{product.category}</td>
-                  <td>{product.brand}</td>
-                  <td>
-                    <LinkContainer to={`/admin/product/${product._id}/edit`}>
-                      <Button variant='light' className='btn-sm'>
-                        <i className='fas fa-edit'></i>
-                      </Button>
-                    </LinkContainer>
-                    <Button
-                      variant='danger'
-                      className='btn-sm'
-                      onClick={() => deleteHandler(product._id)}
-                    >
-                      <i className='fas fa-trash'></i>
+  {loadingDelete && <Loader />}
+  {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
+  {loadingCreate && <Loader />}
+  {errorCreate && <Message variant='danger'>{errorCreate}</Message>}
+
+  {loading ? (
+    <Loader />
+  ) : error ? (
+    <Message variant='danger'>{error}</Message>
+  ) : (
+    <>
+      <div className='table-responsive'>
+        <Table striped bordered hover className='align-middle table-sm shadow-sm'>
+          <thead className='table-dark'>
+            <tr>
+              <th>ID</th>
+              <th>الاسم</th>
+              <th>السعر</th>
+              <th>الفئة</th>
+              <th>العلامة</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product._id}>
+                <td>{product._id}</td>
+                <td>{product.name}</td>
+                <td>ج.م {product.price}</td>
+                <td>{product.category}</td>
+                <td>{product.brand}</td>
+                <td>
+                  <LinkContainer to={`/admin/product/${product._id}/edit`}>
+                    <Button variant='outline-secondary' className='btn-sm me-2' title='تعديل'>
+                      <i className='fas fa-edit'></i>
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          <Paginate pages={pages} page={page} isAdmin={true} />
-        </>
-      )}
+                  </LinkContainer>
+                  <Button
+                    variant='outline-danger'
+                    className='btn-sm'
+                    onClick={() => deleteHandler(product._id)}
+                    title='حذف'
+                  >
+                    <i className='fas fa-trash'></i>
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+      <Paginate pages={pages} page={page} isAdmin={true} />
     </>
+  )}
+</>
+
   )
 }
 

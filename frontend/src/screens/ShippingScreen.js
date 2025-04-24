@@ -14,6 +14,7 @@ const ShippingScreen = ({ history }) => {
   const app = App.useApp();
 
   const [address, setAddress] = useState(shippingAddress.address);
+  const [client_name, setClientName] = useState(shippingAddress.client_name);
   const [city, setCity] = useState(shippingAddress.city);
   const [phoneNumber, setPhoneNumber] = useState(shippingAddress.phoneNumber);
   //const [postalCode, setPostalCode] = useState(shippingAddress.postalCode)
@@ -48,6 +49,7 @@ const ShippingScreen = ({ history }) => {
 
     dispatch(
       saveShippingAddress({
+        client_name,
         address,
         city,
         phoneNumber /*postalCode, country */,
@@ -57,92 +59,85 @@ const ShippingScreen = ({ history }) => {
   };
 
   return (
-    <Spin spinning={isLoading}>
-      <FormContainer>
-        <CheckoutSteps step1 step2 />
-        <h1>الشحن</h1>
-        <Form onSubmit={submitHandler}>
-          <Form.Group controlId='address'>
-            <Form.Label>العنوان</Form.Label>
-            <Form.Control
-              type='text'
-              placeholder='ادخل عنوان التوصيل'
-              value={address}
-              required
-              onChange={(e) => setAddress(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+    
+<Spin spinning={isLoading}>
+  <FormContainer>
+    <CheckoutSteps step1 step2 />
+    <div className='shipping-card p-4 shadow rounded bg-white'>
+      <h2 className='text-center mb-4'>🛵 بيانات التوصيل</h2>
 
-          <Form.Group controlId='city'>
-            <Form.Label>مدينة</Form.Label>
-            {/* <Form.Control
-            type='text'
-            placeholder='ادخل المدينة'
-            value={city}
-            required
-            onChange={(e) => setCity(e.target.value)}
-          ></Form.Control> */}
+      <Form onSubmit={submitHandler} className='shipping-form'>
 
-            <Form.Control
-              as='select'
-              placeholder='ادخل المدينة'
-              value={city?._id}
-              required
-              onChange={(e) => {
-                const fullCity = cities.find((c) => c._id === e.target.value);
-                setCity(fullCity);
-              }}
-            >
-              {cities.map((city) => (
-                <option key={city._id} value={city._id}>
-                  {city.name}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId='phoneNumber'>
-            <Form.Label>رقم الموبايل</Form.Label>
-            <Form.Control
-              type='tel'
-              placeholder='010 100 99 100'
-              value={phoneNumber}
-              required
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
-          {/*
-        <Form.Group controlId='postalCode'>
-          <Form.Label>Postal Code</Form.Label>
+        <Form.Group controlId='client_name' className='mb-3'>
+          <Form.Label>👤 اسم العميل</Form.Label>
           <Form.Control
             type='text'
-            placeholder='Enter postal code'
-            value={postalCode}
+            placeholder='مثال: أحمد محمد'
+            value={client_name}
+            minLength={4}
             required
-            onChange={(e) => setPostalCode(e.target.value)}
-          ></Form.Control>
+            onChange={(e) => setClientName(e.target.value)}
+          />
         </Form.Group>
 
-        <Form.Group controlId='country'>
-          <Form.Label>Country</Form.Label>
+        <Form.Group controlId='address' className='mb-3'>
+          <Form.Label>📍 العنوان بالتفصيل</Form.Label>
           <Form.Control
             type='text'
-            placeholder='Enter country'
-            value={country}
+            placeholder='شارع ٩، المعادي، القاهرة'
+            value={address}
             required
-            onChange={(e) => setCountry(e.target.value)}
-          ></Form.Control>
+            minLength={10}
+            onChange={(e) => setAddress(e.target.value)}
+          />
         </Form.Group>
-*/}
+
+        <Form.Group controlId='city' className='mb-3'>
+          <Form.Label>🏙️ المدينة</Form.Label>
+          <Form.Control
+            as='select'
+            value={city?._id}
+            required
+            onChange={(e) => {
+              const fullCity = cities.find((c) => c._id === e.target.value);
+              setCity(fullCity);
+            }}
+          >
+            {cities.map((city) => (
+              <option key={city._id} value={city._id}>
+                {city.name}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+
+        <Form.Group controlId='phoneNumber' className='mb-4'>
+          <Form.Label>📞 رقم الموبايل</Form.Label>
+          <Form.Control
+            type='tel'
+            placeholder='01012345678'
+            value={phoneNumber}
+            minLength={10}
+            required
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+        </Form.Group>
+
+        <div className='text-center'>
           <Button
             type='submit'
-            variant='primary'
-            style={{ backgroundColor: 'brown' }}
+            className='btn-lg px-5 py-2 rounded-pill'
+            style={{ backgroundColor: '#884A39', border: 'none' }}
           >
-            الاستمرار
+            الاستمرار <i className='fas fa-arrow-left ms-2'></i>
           </Button>
-        </Form>
-      </FormContainer>
-    </Spin>
+        </div>
+      </Form>
+    </div>
+  </FormContainer>
+</Spin>
+
+    
   );
 };
 

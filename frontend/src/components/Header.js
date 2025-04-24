@@ -8,7 +8,6 @@ import { logout } from '../actions/userActions'
 
 const Header = () => {
   const dispatch = useDispatch()
-
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
 
@@ -18,67 +17,86 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar style={{backgroundColor: "gold"}}  expand='lg' collapseOnSelect>
+      <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect className='py-3'>
         <Container>
+          {/* Logo + Brand */}
           <LinkContainer to='/'>
-            <Navbar.Brand>
-            <img src="/rosine-logo.jpg" alt="Rosine Logo" width="80" height="80" className="d-inline-block align-top rounded-circle" />
+            <Navbar.Brand className='d-flex align-items-center gap-2'>
+              <img
+                src='/rosine-logo.jpg'
+                alt=''
+                width='50'
+                height='50'
+                className='rounded-circle'
+              />
+              <span className='fw-bold fs-4 text-warning'>Rosine</span>
             </Navbar.Brand>
           </LinkContainer>
-          <Nav.Link href="" target="_blank" rel="noopener noreferrer">
-            <img src="/callphone.gif" alt="callphone" width="30" height="30" className="d-inline-block align-top rounded-circle" />   
-          </Nav.Link>
-          <Nav.Link href="https://www.facebook.com/profile.php?id=100091321721757&mibextid=ZbWKwL" target="_blank" rel="noopener noreferrer">
-            <img src="/facebook.gif" alt="facebook" width="30" height="30" className="d-inline-block align-top rounded-circle" />
-          </Nav.Link>
-          <Nav.Link href="https://www.instagram.com/rosine.eg/?igsh=aXY1MGZ4MXVsejJ2#" target="_blank" rel="noopener noreferrer">
-            <img src="/instgram.gif" alt="instgram" width="35" height="35" className="d-inline-block align-top rounded-circle" />  
-          </Nav.Link>
-          <Nav.Link href="https://api.whatsapp.com/send/?phone=%2B201211000369&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer">
-            <img src="/whatsapp.gif" alt="whatsapp" width="30" height="30" className="d-inline-block align-top rounded-circle" />  
-          </Nav.Link>
-          <Navbar.Toggle aria-controls='basic-navbar-nav' />
-          <Navbar.Collapse id='basic-navbar-nav'>
-            <Route render={({ history }) => <SearchBox history={history} />} />
-            <Nav className='ml-auto'>
+
+          {/* Toggle for mobile */}
+          <Navbar.Toggle aria-controls='main-navbar' />
+          <Navbar.Collapse id='main-navbar'>
+            {/* Social Icons */}
+            <Nav className='me-auto d-flex align-items-center gap-3 ms-lg-4'>
+              <a href='tel:+201211000369' target='_blank' rel='noopener noreferrer' title='Call'>
+                <img src='/callphone.gif' alt='Call' width='26' className='rounded-circle' />
+              </a>
+              <a href='https://www.facebook.com/profile.php?id=100091321721757&mibextid=ZbWKwL' target='_blank' rel='noopener noreferrer' title='Facebook'>
+                <img src='/facebook.gif' alt='Facebook' width='26' className='rounded-circle' />
+              </a>
+              <a href='https://www.instagram.com/rosine.eg/?igsh=aXY1MGZ4MXVsejJ2#' target='_blank' rel='noopener noreferrer' title='Instagram'>
+                <img src='/instgram.gif' alt='Instagram' width='28' className='rounded-circle' />
+              </a>
+              <a href='https://api.whatsapp.com/send/?phone=%2B201211000369&text&type=phone_number&app_absent=0' target='_blank' rel='noopener noreferrer' title='WhatsApp'>
+                <img src='/whatsapp.gif' alt='WhatsApp' width='26' className='rounded-circle' />
+              </a>
+            </Nav>
+
+            {/* Search box center-aligned */}
+            <div className='mx-auto d-none d-lg-block' style={{ width: '40%' }}>
+              <Route render={({ history }) => <SearchBox history={history} />} />
+            </div>
+
+            {/* Right-side Nav */}
+            <Nav className='ms-auto align-items-center'>
               <LinkContainer to='/cart'>
-                <Nav.Link>
+                <Nav.Link className='text-light'>
                   <i className='fas fa-shopping-cart'></i> عربة التسوق
                 </Nav.Link>
               </LinkContainer>
               {userInfo ? (
-                <NavDropdown title={userInfo.name} id='username'>
+                <NavDropdown title={userInfo.name} id='userDropdown' className='text-light'>
                   <LinkContainer to='/profile'>
-                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                    <NavDropdown.Item>الملف الشخصي</NavDropdown.Item>
                   </LinkContainer>
-                  <NavDropdown.Item onClick={logoutHandler}>
-                    Logout
-                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>تسجيل خروج</NavDropdown.Item>
                 </NavDropdown>
               ) : (
                 <LinkContainer to='/login'>
-                  <Nav.Link>
+                  <Nav.Link className='text-light'>
                     <i className='fas fa-user'></i> تسجيل دخول
                   </Nav.Link>
                 </LinkContainer>
               )}
+
               {userInfo && userInfo.isAdmin && (
-                <NavDropdown title='Admin' id='adminmenu'>
+                <NavDropdown title='🛠️ Admin' id='adminmenu' className='text-light'>
                   <LinkContainer to='/admin/userlist'>
-                    <NavDropdown.Item>Users</NavDropdown.Item>
+                    <NavDropdown.Item>المستخدمين</NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to='/admin/productlist'>
-                    <NavDropdown.Item>Products</NavDropdown.Item>
+                    <NavDropdown.Item>المنتجات</NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to='/admin/orderlist'>
-                    <NavDropdown.Item>Orders</NavDropdown.Item>
+                    <NavDropdown.Item>الطلبات</NavDropdown.Item>
                   </LinkContainer>
                   <LinkContainer to='/admin/city'>
-                    <NavDropdown.Item>Cities</NavDropdown.Item>
+                    <NavDropdown.Item>المدن</NavDropdown.Item>
                   </LinkContainer>
                 </NavDropdown>
               )}
             </Nav>
+
           </Navbar.Collapse>
         </Container>
       </Navbar>

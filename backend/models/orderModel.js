@@ -25,6 +25,7 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     shippingAddress: {
+      client_name: { type: String, required: true },
       address: { type: String, required: true },
       city: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true, autopopulate: true },
       phoneNumber: { type: String, required: true },

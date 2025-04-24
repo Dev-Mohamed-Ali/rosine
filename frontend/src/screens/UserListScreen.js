@@ -35,27 +35,32 @@ const UserListScreen = () => {
   }
 
   return (
+<>
+  <div className='d-flex justify-content-between align-items-center mb-4'>
+    <h1 className='text-primary'>👥 إدارة المستخدمين</h1>
+  </div>
+
+  {loading ? (
+    <Loader />
+  ) : error ? (
+    <Message variant='danger'>{error}</Message>
+  ) : (
     <>
-      <h1>Users</h1>
-      {loading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : (
-        <Table striped bordered hover responsive className="table-sm">
-          <thead>
-            <tr>
+      <div className='table-responsive'>
+        <Table striped bordered hover responsive className='table-sm shadow-sm align-middle'>
+          <thead className='table-dark'>
+            <tr className='text-center'>
               <th>ID</th>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>ADMIN</th>
-              <th>ACTIONS</th>
+              <th>الاسم</th>
+              <th>البريد الإلكتروني</th>
+              <th>مسؤول</th>
+              <th>إجراءات</th>
             </tr>
           </thead>
           <tbody>
             {users && users.length > 0 ? (
               users.map((user) => (
-                <tr key={user._id}>
+                <tr key={user._id} className='text-center'>
                   <td>{user._id}</td>
                   <td>{user.name}</td>
                   <td>
@@ -63,38 +68,42 @@ const UserListScreen = () => {
                   </td>
                   <td>
                     {user.isAdmin ? (
-                      <i className="fas fa-check" style={{ color: 'green' }}></i>
+                      <i className='fas fa-check-circle text-success' title='Admin'></i>
                     ) : (
-                      <i className="fas fa-times" style={{ color: 'red' }}></i>
+                      <i className='fas fa-times-circle text-danger' title='Not Admin'></i>
                     )}
                   </td>
                   <td>
                     <LinkContainer to={`/admin/user/${user._id}/edit`}>
-                      <Button variant="light" className="btn-sm">
-                        <i className="fas fa-edit"></i>
+                      <Button variant='outline-secondary' className='btn-sm me-2' title='تعديل'>
+                        <i className='fas fa-edit'></i>
                       </Button>
                     </LinkContainer>
                     <Button
-                      variant="danger"
-                      className="btn-sm"
+                      variant='outline-danger'
+                      className='btn-sm'
                       onClick={() => deleteHandler(user._id)}
+                      title='حذف المستخدم'
                     >
-                      <i className="fas fa-trash"></i>
+                      <i className='fas fa-trash'></i>
                     </Button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="5">
-                  <Message variant="info">No users found</Message>
+                <td colSpan='5' className='text-center'>
+                  <Message variant='info'>لا يوجد مستخدمين حاليًا</Message>
                 </td>
               </tr>
             )}
           </tbody>
         </Table>
-      )}
+      </div>
     </>
+  )}
+</>
+
   )
 }
 

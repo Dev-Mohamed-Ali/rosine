@@ -1,7 +1,7 @@
 import axios from '../axiosConfig'
 import React, {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
-import { Form, Button } from 'react-bootstrap'
+import {Form, Button, Card} from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
@@ -66,93 +66,114 @@ useEffect(() => {
 }, [success, product, history, dispatch]);
 
   return (
-    <>
-      <Link to='/admin/productlist' className='btn btn-light my-3'>
-        Go Back
-      </Link>
-      <FormContainer>
-        <h1>Create Product</h1>
-        {loading && <Loader />}
-        {error && <Message variant='danger'>{error}</Message>}
-        <Form onSubmit={submitHandler}>
-          <Form.Group controlId='name'>
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type='text'
-              placeholder='Enter product name'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+<>
+  <Link to='/admin/productlist' className='btn btn-outline-secondary my-3'>
+    <i className='fas fa-arrow-left'></i> العودة إلى قائمة المنتجات
+  </Link>
+  <FormContainer>
+    <Card className='shadow-sm p-4 bg-white rounded'>
+      <h1 className='text-center text-success mb-4'> إنشاء منتج جديد</h1>
 
-          <Form.Group controlId='price'>
-            <Form.Label>Price</Form.Label>
-            <Form.Control
-              type='number'
-              placeholder='Enter price'
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+      {loading && <Loader />}
+      {error && <Message variant='danger'>{error}</Message>}
 
-          <Form.Group controlId='image'>
-            <Form.Label>Image</Form.Label>
-            <Form.Control
-              type='text'
-              placeholder='Enter image URL'
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-            ></Form.Control>
-            <Form.File id='image-file' label='Choose File' custom onChange={uploadFileHandler}></Form.File>
-            {uploading && <Loader />}
-          </Form.Group>
+      <Form onSubmit={submitHandler}>
+        <Form.Group controlId='name'>
+          <Form.Label>اسم المنتج</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='أدخل اسم المنتج'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          ></Form.Control>
+        </Form.Group>
 
-          <Form.Group controlId='brand'>
-            <Form.Label>Brand</Form.Label>
-            <Form.Control
-              type='text'
-              placeholder='Enter brand'
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+        <Form.Group controlId='price'>
+          <Form.Label>السعر</Form.Label>
+          <Form.Control
+            type='number'
+            placeholder='أدخل السعر'
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          ></Form.Control>
+        </Form.Group>
 
-          <Form.Group controlId='category'>
-            <Form.Label>Category</Form.Label>
-            <Form.Control
-              type='text'
-              placeholder='Enter category'
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+        <Form.Group controlId='image'>
+          <Form.Label>رابط الصورة</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='أدخل رابط الصورة'
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+          ></Form.Control>
+          <Form.File
+            id='image-file'
+            label='اختيار صورة'
+            custom
+            onChange={uploadFileHandler}
+          ></Form.File>
+          {uploading && <Loader />}
+          {image && (
+            <div className='mt-3'>
+              <img src={image} alt='Preview' style={{ width: '100%', maxWidth: '200px' }} />
+            </div>
+          )}
+        </Form.Group>
 
-          <Form.Group controlId='countInStock'>
-            <Form.Label>Count In Stock</Form.Label>
-            <Form.Control
-              type='number'
-              placeholder='Enter stock count'
-              value={countInStock}
-              onChange={(e) => setCountInStock(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+        <Form.Group controlId='brand'>
+          <Form.Label>العلامة التجارية</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='أدخل العلامة التجارية'
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            required
+          ></Form.Control>
+        </Form.Group>
 
-          <Form.Group controlId='description'>
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              type='text'
-              placeholder='Enter description'
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></Form.Control>
-          </Form.Group>
+        <Form.Group controlId='category'>
+          <Form.Label>الفئة</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='أدخل الفئة'
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          ></Form.Control>
+        </Form.Group>
 
-          <Button type='submit' variant='primary'>
-            Create
-          </Button>
-        </Form>
-      </FormContainer>
-    </>
+        <Form.Group controlId='countInStock'>
+          <Form.Label>الكمية في المخزون</Form.Label>
+          <Form.Control
+            type='number'
+            placeholder='أدخل الكمية المتوفرة'
+            value={countInStock}
+            onChange={(e) => setCountInStock(e.target.value)}
+            required
+          ></Form.Control>
+        </Form.Group>
+
+        <Form.Group controlId='description'>
+          <Form.Label>الوصف</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='أدخل وصف المنتج'
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          ></Form.Control>
+        </Form.Group>
+
+        <Button type='submit' variant='success' className='btn-block btn-lg rounded-pill'>
+          إنشاء المنتج
+        </Button>
+      </Form>
+    </Card>
+  </FormContainer>
+</>
+
   )
 }
 

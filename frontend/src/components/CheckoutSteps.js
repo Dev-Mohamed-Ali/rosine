@@ -2,47 +2,47 @@ import React from 'react'
 import { Nav } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
-const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
+const CheckoutSteps = ({ step1, step2, step3 }) => {
   return (
-    <Nav className='justify-content-center mb-4' style={{fontSize: '18px'}}>
-      {/*<Nav.Item>
-        {step1 ? (
-          <LinkContainer to='/login'>
-            <Nav.Link>Sign In</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>Sign In</Nav.Link>
-        )}
-      </Nav.Item> */}
-
+    <Nav className='justify-content-center mb-4' style={{ fontSize: '18px' }}>
+      
+      {/* Step 1 (Shipping) */}
       <Nav.Item>
-        {step2 ? (
-          <LinkContainer to='/shipping'>
-            <Nav.Link>الشحن</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>الشحن</Nav.Link>
-        )}
+        <LinkContainer to='/shipping'>
+          <Nav.Link
+            className={`step ${step1 ? 'active' : 'disabled'}`}
+            aria-disabled={!step1}
+          >
+            <i className={`fas fa-box ${step1 ? 'text-success' : 'text-muted'}`}></i> 
+            الشحن
+          </Nav.Link>
+        </LinkContainer>
       </Nav.Item>
 
+      {/* Step 2 (Payment) */}
       <Nav.Item>
-        {step3 ? (
-          <LinkContainer to='/payment'>
-            <Nav.Link>الدفع</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>الدفع</Nav.Link>
-        )}
+        <LinkContainer to='/payment'>
+          <Nav.Link
+            className={`step ${step2 ? 'active' : 'disabled'}`}
+            aria-disabled={!step2}
+          >
+            <i className={`fas fa-credit-card ${step2 ? 'text-success' : 'text-muted'}`}></i>
+            الدفع
+          </Nav.Link>
+        </LinkContainer>
       </Nav.Item>
 
+      {/* Step 3 (Place Order) */}
       <Nav.Item>
-        {step4 ? (
-          <LinkContainer to='/placeorder'>
-            <Nav.Link>إنهاء الاوردر</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>إنهاء الاوردر</Nav.Link>
-        )}
+        <LinkContainer to='/placeorder'>
+          <Nav.Link
+            className={`step ${step3 ? 'active' : 'disabled'}`}
+            aria-disabled={!step3}
+          >
+            <i className={`fas fa-check-circle ${step3 ? 'text-success' : 'text-muted'}`}></i>
+            إنهاء الاوردر
+          </Nav.Link>
+        </LinkContainer>
       </Nav.Item>
     </Nav>
   )
