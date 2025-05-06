@@ -151,25 +151,38 @@ const exportOrders = asyncHandler(async (req, res) => {
     .populate('user', 'id name')
     .populate('orderItems')
 
-  const data = [
-    ['Order ID', 'username','client_name', 'phone','address','Service_Category', 'Payment_Type', 'Service', 'City', 'ReturnServiceType', 'Packagevolume'],
-  ]
+const data = [
+  ['Order ID', 'username', 'client_name', 'phone', 'address', 'Service_Category','itemPrices', 'totalPrice', 'quantity', 'name', 'Payment_Type', 'Service', 'City', 'ReturnServiceType', 'Packagevolume'],
+];
 
-  orders.forEach(order => {
-    data.push([
-      String(order._id),
-      order.user?.name,
-      order.shippingAddress?.client_name || '',
-      order.shippingAddress?.phoneNumber || '',
-      order.shippingAddress?.address || '',
-      'Delivery',
-      'Cash-on-Delivery',
-      order.createdAt.toDateString() === new Date().toDateString() ? 'Same Day' : 'Next Day',
-      order.shippingAddress?.city?.name || '',
-      'Door-to-Door',
-      'Small',
-    ])
-  })
+orders.forEach(order => {
+  // Collect item details
+  const itemNames = order.orderItems.map(item => item.name).join(', ');
+  const itemQuantities = order.orderItems.map(item => item.qty).join(', ');
+  const itemPrices = order.orderItems.map(item => item.price).join(', ');
+
+  // Calculate total price (optional)
+  const totalPrice = order.orderItems.reduce((sum, item) => sum + (item.qty * item.price), 0);
+
+  data.push([
+    String(order._id),
+    order.user?.name || '',
+    order.shippingAddress?.client_name || '',
+    order.shippingAddress?.phoneNumber || '',
+    order.shippingAddress?.address || '',
+    'Delivery',
+    itemPrices,
+    totalPrice, // or itemPrices if you want per-item price string
+    itemQuantities,
+    itemNames,
+    'Cash-on-Delivery',
+    order.createdAt.toDateString() === new Date().toDateString() ? 'Same Day' : 'Next Day',
+    order.shippingAddress?.city?.name || '',
+    'Door-to-Door',
+    'Small',
+  ]);
+});
+
 
   const worksheet = XLSX.utils.aoa_to_sheet(data)
   const workbook = XLSX.utils.book_new()
